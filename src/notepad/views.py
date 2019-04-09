@@ -12,7 +12,7 @@ def create_view(request):
     if form.is_valid():
         form.instance.user = request.user
         form.save()
-        return redirect('/')
+        return redirect('/notes/list')
 
     context = {
         'form': form
@@ -26,3 +26,10 @@ def list_view(request):
         'object_list': notes
     }
     return render(request, "notepad/list.html", context)
+
+def delete_view(request, id):
+    item_to_delete = Note.objects.filter(pk=id)
+    if item_to_delete.exists():
+        if request.user == item_to_delete[0].user:
+            item_to_delete[0].delete()
+    return redirect('/notes/list')
